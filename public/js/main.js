@@ -6,23 +6,20 @@ var canvas = window.canvas = document.querySelector('canvas');
 canvas.width = 480;
 canvas.height = 360;
 
-var uploadAndIndexBtn = $("#uploadAndIndex");
-uploadAndIndexBtn.on("click", function() {
-    var jpegUrl = takeSnapshot();
-    // now let's call the api
-    registerFace({
-        name: "other",
-        lastname: "name",
-        image: jpegUrl
-    })
+var jpegUrl;
+
+var takePhotoBtn = $("#takePhotoBtn");
+takePhotoBtn.on("click", function() {
+   jpegUrl = takeSnapshot();
 });
 
-var recognizeBtn = $("#recognize");
-recognizeBtn.on("click", function() {
-    var jpegUrl = takeSnapshot();
-    // now let's call the api
-    recognizeFace({
-        image: jpegUrl
+var registerBtn = $("#registerBtn");
+registerBtn.on("click", function() {
+    var uid = $('#uid').val();
+    register({
+        uid: uid,
+        lastname: "name",
+        encoding: jpegUrl
     })
 });
 
@@ -34,7 +31,7 @@ function takeSnapshot() {
     return jpegUrl;
 }
 
-function registerFace(req) {
+function register(req) {
     $.ajax({
         type: "POST",
         url: "http://localhost:3000/participants",
@@ -50,17 +47,6 @@ function fillResponse(res, text, jqXHR) {
     $("#response").text(JSON.stringify(res));
 }
 
-function recognizeFace(req) {
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:3000/participants/recognition",
-        contentType: "application/json",
-        //dataType:"json",
-        data: JSON.stringify(req)
-    }).always(function(data){
-        fillResponse(data);
-    });
-};
 
 var constraints = {
     audio: false,
